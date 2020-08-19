@@ -3,9 +3,14 @@ import style from './imageGalleryItem.module.css';
 
 export default class ImageGalleryItem extends Component {
   render() {
-    const { id, src, alt } = this.props;
+    const { src, alt, largeImage, openModal } = this.props;
     return (
-      <li id={id} key={id} className={style.ImageGalleryItem}>
+      <li
+        onClick={() => {
+          openModal(largeImage);
+        }}
+        className={style.ImageGalleryItem}
+      >
         <img src={src} alt={alt} className={style.ImageGalleryItemImage} />
       </li>
     );

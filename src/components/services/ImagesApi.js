@@ -1,14 +1,12 @@
-import axios from 'axios';
+import axios from "axios";
 
-const axiosKey = '17528324-3082acf682c990c8e2fa3d4c7';
+const API_key = "17528324-3082acf682c990c8e2fa3d4c7";
 
-const imagesFetchApi = (searchValue, page = 1) => {
+const imagesFetchApi = (input, page) => {
   return axios
     .get(
-      `https://pixabay.com/api/?q=${searchValue}&page=${3}$&key=${axiosKey}&image_type=photo&orientation=horizontal&per_page=12`,
+      `https://pixabay.com/api/?image_type=photo&orientation=horizontal&q=${input}&page=${page}&per_page=12&key=${API_key}`
     )
-    .then(response => response.data.hits);
+    .then((response) => response.data.hits);
 };
 export default { imagesFetchApi };
-
-// https://pixabay.com/api/?q=что_искать&page=номер_страницы&key=твой_ключ&image_type=photo&orientation=horizontal&per_page=12

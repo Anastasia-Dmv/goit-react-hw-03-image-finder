@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import Loader from 'react-loader-spinner';
 import Searchbar from '../components/searchbar/Searchbar';
 import ImageGallery from '../components/imageGallery/ImageGallery';
 import imagesFetchApi from '../components/services/ImagesApi';
 import Button from '../components/button/Button';
+import Modal from '../components/modal/Modal';
+//import uuid from 'react-uuid';
 
 //const baseUrl = 'https://pixabay.com/api/?';
 export default class App extends Component {
@@ -11,29 +14,60 @@ export default class App extends Component {
     searchValue: '',
     page: 1,
     error: '',
-    loading: false,
+    isLoading: false,
+    largeImage: null,
+    isShowModal: false,
   };
 
-  //   componentDidUpdate(prevProps, prevState) {
-  //     const prevQuery = prevState.searchValue;
-  //     const nextQuery = this.state.searchValue;
-  //     if (prevQuery !== nextQuery) {
-  //       this.getImages();
-  //     }
-  //   }
+  componentDidUpdate(prevProps, prevState) {
+    // const prevQuery = prevState.searchValue;
+    // const nextQuery = this.state.searchValue;
+    // if (prevState.images.length < this.state.images.length) {
+    //   window.scrollBy({
+    //     top: 1000,
+    //     left: 100,
+    //     behavior: "smooth",
+    //   });
+    //   // window.scrollTo({
+    //   //   top: document.documentElement.scrollHeight,
+    //   //   behavior: "smooth",
+    //   // });
+
+    //   // window.scrollTo({
+    //   //   top: document.body.scrollHeight,
+    //   //   behavior: "smooth",
+    //   // });
+    // }
+
+    if (prevState.images.length !== this.state.images.length) {
+      window.scrollBy({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }
   getImages = e => {
     const { searchValue, page } = this.state;
+    this.setState({ isLoading: true });
 
     imagesFetchApi
       .imagesFetchApi(searchValue, page)
-      .then(images =>
+      .then(images => {
         this.setState(prevState => ({
           images: [...prevState.images, ...images],
           page: prevState.page + 1,
-        })),
-      )
+        }));
+
+        // window.scrollTo({
+        //   top: document.documentElement.scrollHeight,
+        //   behavior: "smooth",
+        // });
+      })
       .catch(error => this.setState({ error }))
-      .finally(() => this.setState({ loading: false }));
+      .finally(() => {
+        console.log('finally');
+        this.setState({ isLoading: false });
+      });
   };
   handleSearchFormSubmit = e => {
     e.preventDefault();
@@ -47,29 +81,30 @@ export default class App extends Component {
   };
   handleSearchQuery = e => {
     this.setState({ searchValue: e.target.value });
-    //this.getImages(this.state.searchValue);
-    //const result = await this.getImages(this.state.searchValue);
-    // this.setState({ images: [...result], page: 2 });
   };
 
-  loadMoreImages = () => {
+  loadMoreImages = e => {
     const { searchValue, page } = this.state;
     this.getImages(searchValue, page);
-
-    // this.setState(
-    //   prevState => ({
-    //     images: [...prevState.images, ...result],
-    //     page: prevState.page + 1,
-    //   }),
-    // //   //this.getImages(this.state.searchValue, this.state.page);
-    // //   // this.setState(prevState => ({
-    // //   //   images: [...prevState.images, ...result],
-    // //   //   page: prevState.page + 1,
-    // //   // }));
-    // );
   };
+
+  openModal = largeImage => {
+    this.setState({ isShowModal: true, largeImage: largeImage });
+  };
+
+  closeModal = () => {
+    this.setState({ isShowModal: false, largeImage: null });
+  };
+
   render() {
-    const { searchValue, images } = this.state;
+    const {
+      searchValue,
+      images,
+      isLoading,
+      isShowModal,
+      largeImage,
+    } = this.state;
+    console.log('isLoading', isLoading);
     return (
       <div>
         <Searchbar
@@ -77,9 +112,25 @@ export default class App extends Component {
           handleSearchQuery={this.handleSearchQuery}
           getImages={this.handleSearchFormSubmit}
         />
-        <ImageGallery images={images} />
+        {isLoading && (
+          <div style={{ position: 'fixed' }}>
+            <Loader
+              type="Puff"
+              color="#00BFFF"
+              height={100}
+              width={100}
+              timeout={3000}
+            />
+          </div>
+        )}
+        <ImageGallery images={images} openModal={this.openModal} />
+
         {images.length > 0 && <Button loadMoreImages={this.loadMoreImages} />}
+        {isShowModal && (
+          <Modal closeModal={this.closeModal} largeImage={largeImage} />
+        )}
       </div>
     );
   }
 }
+//tag={tag}
