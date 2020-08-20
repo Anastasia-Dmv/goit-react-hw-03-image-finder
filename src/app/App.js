@@ -5,9 +5,7 @@ import ImageGallery from '../components/imageGallery/ImageGallery';
 import imagesFetchApi from '../components/services/ImagesApi';
 import Button from '../components/button/Button';
 import Modal from '../components/modal/Modal';
-//import uuid from 'react-uuid';
 
-//const baseUrl = 'https://pixabay.com/api/?';
 export default class App extends Component {
   state = {
     images: [],
@@ -28,17 +26,7 @@ export default class App extends Component {
     //     left: 100,
     //     behavior: "smooth",
     //   });
-    //   // window.scrollTo({
-    //   //   top: document.documentElement.scrollHeight,
-    //   //   behavior: "smooth",
-    //   // });
-
-    //   // window.scrollTo({
-    //   //   top: document.body.scrollHeight,
-    //   //   behavior: "smooth",
-    //   // });
     // }
-
     if (prevState.images.length !== this.state.images.length) {
       window.scrollBy({
         top: document.documentElement.scrollHeight,
@@ -57,11 +45,14 @@ export default class App extends Component {
           images: [...prevState.images, ...images],
           page: prevState.page + 1,
         }));
+        // const crossAxis = document.documentElement.offsetHeight - 150;
 
-        // window.scrollTo({
-        //   top: document.documentElement.scrollHeight,
-        //   behavior: "smooth",
-        // });
+        // setTimeout(() => {
+        //   window.scrollTo({
+        //     top: crossAxis,
+        //     behavior: 'smooth',
+        //   });
+        // }, 100);
       })
       .catch(error => this.setState({ error }))
       .finally(() => {
@@ -127,10 +118,9 @@ export default class App extends Component {
 
         {images.length > 0 && <Button loadMoreImages={this.loadMoreImages} />}
         {isShowModal && (
-          <Modal closeModal={this.closeModal} largeImage={largeImage} />
+          <Modal onClose={this.closeModal} largeImage={largeImage} />
         )}
       </div>
     );
   }
 }
-//tag={tag}

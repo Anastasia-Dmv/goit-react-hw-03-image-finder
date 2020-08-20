@@ -1,32 +1,34 @@
-import style from './modal.module.css';
-
-// export default function Modal({ largeImage, closeModal }) {
-//   return (
-
-//   );
-// }
-//alt={tag}
 import React, { Component } from 'react';
+import style from './modal.module.css';
 
 export default class Modal extends Component {
   componentDidMount() {
-    window.addEventListener('keydown', this.handleModal);
-    document.addEventListener('click', this.handleModal),
+    window.addEventListener('keydown', this.clickOnCloseBtn);
+    document.addEventListener('click', this.clickOnOverlay);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleModal)
-    document.addEventListener('click', this.handleModal),
+    window.removeEventListener('keydown', this.clickOnCloseBtn);
+    document.addEventListener('click', this.clickOnOverlay);
   }
 
-  handleModal = () => {};
+  clickOnCloseBtn = e => {
+    e.code === 'Escape' && this.props.onClose();
+  };
+
+  clickOnOverlay = e => {
+    (e.target.nodeName === 'DIV' || e.target.nodeName === 'BUTTON') &&
+      this.props.onClose();
+  };
+
   render() {
-    const { largeImage, closeModal } = this.props;
+    const { largeImage } = this.props;
     return (
       <div>
-        <div onClick={closeModal} className={style.Overlay}>
+        <div className={style.Overlay}>
           <div className={style.Modal}>
             <img src={largeImage} alt={''} />
+            <button className={style.ModalBtn}>X</button>
           </div>
         </div>
       </div>
